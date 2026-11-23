@@ -116,3 +116,17 @@ test('card names', () => {
   assert.equal(cardName(0), 'A♠'); assert.equal(cardName(51), 'K♦'); assert.equal(cardName(22), '10♥');
   assert.ok(isRed(13) && isRed(51) && !isRed(0) && !isRed(26));
 });
+
+test('one riffle of ANY deck at most doubles its rising sequences (all 6-card decks, all cuts and interleavings)', () => {
+  const perms = a => a.length <= 1 ? [a] : a.flatMap((x, i) => perms([...a.slice(0, i), ...a.slice(i + 1)]).map(p => [x, ...p]));
+  for (const d of perms(fresh(6))) {
+    const r = risingSequences(d).count;
+    for (let c = 0; c <= 6; c++) {
+      const A = d.slice(0, c), B = d.slice(c);
+      (function rec(i, j, o) {
+        if (i === A.length && j === B.length) { assert.ok(risingSequences(o).count <= 2 * r); return; }
+        if (i < A.length) rec(i + 1, j, [...o, A[i]]); if (j < B.length) rec(i, j + 1, [...o, B[j]]);
+      })(0, 0, []);
+    }
+  }
+});
