@@ -103,3 +103,4 @@ table.data th, table.data td { padding: 3px 10px; text-align: right; border-bott
 @media (max-width: 480px) { .spread button.card { width: calc((100% - 12 * 2px) / 13); font-size: 12px; line-height: 1.15; aspect-ratio: 1 / 2; } }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+.widget .controls + canvas.strip { margin-top: 14px; }

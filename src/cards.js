@@ -141,3 +141,19 @@ export function movedOdds(deck, k) {
   let tot = 0; for (let x = 0; x < n; x++) { like[x] = logs[x] === -Infinity ? 0 : Math.exp(logs[x] - max); tot += like[x]; }
   return Array.from(like, v => v / tot);
 }
+
+// How well does k riffles explain a given deck (from the fresh order)? A deck with r rising sequences has probability
+// C(n+a-r, n)/a^n after k riffles (a = 2^k) and 1/n! in a perfectly random deck. Returns, for k = 1..maxK, the log of
+// the ratio P_k(deck) / P_random(deck) (-Infinity if k riffles cannot produce the deck), plus r.
+export function riffleFit(deck, maxK = 12) {
+  const n = deck.length, { count: r } = risingSequences(deck);
+  let logFact = 0; for (let i = 2; i <= n; i++) logFact += Math.log(i);
+  const rows = [];
+  for (let k = 1; k <= maxK; k++) {
+    const a = 2 ** k;
+    if (r > a) { rows.push({ k, logRatio: -Infinity }); continue; }
+    let l = 0; for (let i = 1; i <= n; i++) l += Math.log(a - r + i) - Math.log(i);
+    rows.push({ k, logRatio: l + logFact - n * k * Math.LN2 });
+  }
+  return { r, rows };
+}

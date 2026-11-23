@@ -130,3 +130,24 @@ test('one riffle of ANY deck at most doubles its rising sequences (all 6-card de
     }
   }
 });
+
+test('cuts between riffles add at most one rising sequence in total (simulation, as the page says)', () => {
+  const r = rng(77);
+  for (let k = 1; k <= 4; k++) for (let t = 0; t < 3000; t++) {
+    let d = fresh(52);
+    for (let i = 0; i < k; i++) { const c = Math.floor(r() * 52); d = [...d.slice(c), ...d.slice(0, c)]; d = riffle(d, r); }
+    const c = Math.floor(r() * 52); d = [...d.slice(c), ...d.slice(0, c)];
+    assert.ok(risingSequences(d).count <= 2 ** k + 1);
+  }
+});
+
+test('riffleFit: impossible below log2(r) riffles, ratio falls toward 1 as k grows', async () => {
+  const { riffleFit } = await import('../src/cards.js');
+  let d = fresh(52); const r = rng(3); for (let i = 0; i < 3; i++) d = riffle(d, r);
+  const f = riffleFit(d); const fewest = Math.ceil(Math.log2(f.r));
+  for (const x of f.rows) { if (x.k < fewest) assert.equal(x.logRatio, -Infinity); }
+  const live = f.rows.filter(x => x.logRatio > -Infinity);
+  for (let i = 1; i < live.length; i++) assert.ok(live[i].logRatio < live[i - 1].logRatio);
+  assert.ok(Math.abs(live.at(-1).logRatio) < 0.5);
+  assert.equal(riffleFit(fresh(52)).r, 1);
+});
