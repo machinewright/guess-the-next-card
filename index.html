@@ -36,8 +36,8 @@ fresh deck. A fresh deck is a staircase. Riffle it.</p>
 
 <p>After one riffle you see two staircases woven into each other: the top half and the bottom half each kept their
 order. Each run of consecutive cards that is still in order (the 1st, 2nd, 3rd card of the old deck, and so on, appearing
-top to bottom) is called a <em>rising sequence</em>. A riffle can at most double their number, because it weaves two
-halves and each half already holds whatever sequences there were. One riffle makes at most 2, two make at most 4,
+top to bottom) is called a <em>rising sequence</em>. A riffle can at most double their number: the cut splits each rising sequence into at most two pieces, a beginning
+in the top half and an end in the bottom half, and the riffle keeps each piece in order. One riffle makes at most 2, two make at most 4,
 three at most 8.</p>
 <p>That is the memory a shuffled deck keeps. A completely reversed deck has 52 rising sequences, one card each, so no
 five riffles can ever produce it: five allow at most 32. A truly random deck has 26.5 on average.</p>
@@ -89,7 +89,7 @@ about once in two million deals. Then the curve turns: 0.92 after five riffles, 
 and from there it halves with every riffle. Seven is where the drop has mostly happened. It is not a magic line:
 0.33 is still a real distance, and an eighth riffle halves it.</p>
 <p>How many you need also depends on what you are protecting. Measured by entropy instead, the deck is almost mixed
-sooner: Lloyd and Nick Trefethen found that 3.5% of the information about the old order remains after five riffles
+sooner: L. N. and L. M. Trefethen found that 3.5% of the information about the old order remains after five riffles
 and 0.9% after six. And if all that matters is one card, or only the colours, fewer riffles do the job: Assaf,
 Diaconis and Soundararajan showed that for such features the count drops from about 1.5&nbsp;log₂&nbsp;<i>n</i> to
 about log₂&nbsp;<i>n</i>, where <i>n</i> is the number of cards.</p>
@@ -113,7 +113,7 @@ still six times better than a blind guess. Press <b>Try 200 random moves</b> to 
 <h2>Other ways to mix</h2>
 <p><b>Shelf shufflers.</b> Some casinos used a machine that deals cards at random onto ten shelves and then stacks the
 shelves. Diaconis, Fulman and Holmes analysed it in 2013 and found that <q>a knowledgeable player could guess about
-9&nbsp;1/2 cards correctly in a single run through a 52-card deck</q>, the same game as on this page, against 4.5 for a
+9&nbsp;1/2 cards correctly in a single run through a 52-card deck</q>, in the same kind of guessing game as on this page, against 4.5 for a
 random deck. Their advice was to run the deck through the machine twice, which the manufacturer adopted. The company's
 president replied: <q>We are not pleased with your conclusions, but we believe them</q>.</p>
 <p><b>The overhand shuffle</b>, sliding small packets from one hand to the other, mixes far more slowly. Pemantle and
@@ -124,8 +124,7 @@ In tests by Diaconis and his colleagues, 15 seconds of smooshing failed badly, w
 ten of their tests. Diaconis: <q>If you smoosh for a minute, it passes all the tests we've ever thrown at it.</q></p>
 
 <h2>So</h2>
-<p>Three riffles leave a deck that a careful player can read nearly three times better than chance. Four leave it twice
-as readable, and a certain test can tell it from random every time. Seven bring the guessing game down to within half a
+<p>Three riffles leave a deck that a careful player can read nearly three times better than chance. Four leave it twice as readable, and counting rising sequences tells it from a random deck almost every time. Seven bring the guessing game down to within half a
 card of a random deck. If anything rides on the deal, riffle seven times, or smoosh for a minute.</p>
 
 <footer>
