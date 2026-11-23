@@ -155,5 +155,11 @@ export function riffleFit(deck, maxK = 12) {
     let l = 0; for (let i = 1; i <= n; i++) l += Math.log(a - r + i) - Math.log(i);
     rows.push({ k, logRatio: l + logFact - n * k * Math.LN2 });
   }
-  return { r, rows };
+  // Exact chance that a perfectly shuffled deck has at most / at least r rising sequences (Eulerian numbers).
+  let row = [1n];
+  for (let m = 2; m <= n; m++) { const nr = []; for (let d = 0; d < m; d++) nr[d] = BigInt(d + 1) * (row[d] || 0n) + BigInt(m - d) * (row[d - 1] || 0n); row = nr; }
+  let total = 0n, le = 0n, ge = 0n;
+  row.forEach((c, d) => { total += c; if (d + 1 <= r) le += c; if (d + 1 >= r) ge += c; });
+  const frac = x => Number(x * 10n ** 15n / total) / 1e15;
+  return { r, rows, pAtMost: frac(le), pAtLeast: frac(ge) };
 }

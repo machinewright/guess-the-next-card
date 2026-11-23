@@ -30,25 +30,28 @@ export function mount(el) {
     for (const [c, b] of btn) b.disabled = set.has(c);
     el.querySelector('[data-a=undo]').disabled = !entered.length;
     dealt.innerHTML = entered.length ? `Your deck from the top (${entered.length} of 52): ` + entered.map(c => `<span class="${isRed(c) ? 'red' : ''}">${cardName(c)}</span>`).join(' ') : '';
-    say.innerHTML = done ? 'All 52 cards in.' : entered.length ? `Next: card ${entered.length + 1} from the top.` : 'Click the top card of your deck first, then the next one down, and so on.';
+    const lastName = entered.length ? `${cardLong(entered.at(-1))} is card ${entered.length}. ` : '';
+    say.innerHTML = done ? `${lastName}All 52 cards in.` : entered.length ? `${lastName}Next: card ${entered.length + 1} from the top.` : 'Click the top card of your deck first, then the next one down, and so on.';
     cv.hidden = !done;
     if (!done) { out.innerHTML = ''; return; }
-    const { r, rows } = riffleFit(entered), { seq } = risingSequences(entered);
+    const { r, rows, pAtMost, pAtLeast } = riffleFit(entered), { seq } = risingSequences(entered);
     drawBars(cv, entered, { colourOf: c => r <= 8 ? SEQ_COLOURS[seq[c]] : '#d9d2c3' });
     cv.setAttribute('aria-label', `Bar chart of your deck: ${r} rising sequences.`);
     const fewest = Math.ceil(Math.log2(r)), shown = rows.filter(x => x.k >= Math.max(1, fewest) && x.k <= Math.max(fewest + 3, 7));
     let html = `<p>Your deck has <span class="num">${r}</span> rising sequence${r === 1 ? '' : 's'}. A perfectly shuffled deck has 26.5 on average. ` +
       (r === 1 ? 'It is still in order.' : `The fewest riffles that can make ${r} is <span class="num">${fewest}</span> (one riffle at most doubles them)` +
-        (r > 2 && Math.ceil(Math.log2(r - 1)) < fewest ? `, or ${Math.ceil(Math.log2(r - 1))} if the deck was also cut.` : '.')) +
+        (r > 2 && Math.ceil(Math.log2(r - 1)) < fewest ? `, or possibly ${Math.ceil(Math.log2(r - 1))} if you also cut the deck.` : '.')) +
       ` Cutting the deck between riffles barely matters: in simulations it never added more than one in total.</p>`;
     if (r > 1) {
       html += `<p>How much more likely a deck exactly like yours is after <i>k</i> riffles than from a perfect shuffle:</p><table class="data"><tbody>` +
-        shown.map(x => `<tr><td>${x.k} riffle${x.k === 1 ? '' : 's'}</td><td>${x.logRatio === -Infinity ? 'impossible' : x.logRatio >= 0 ? fmtPow(x.logRatio) + ' times' : `${fmtPow(-x.logRatio)} times <i>less</i> likely`}</td></tr>`).join('') + `</tbody></table>`;
+        shown.map(x => `<tr><td>${x.k} riffle${x.k === 1 ? '' : 's'}</td><td>${x.logRatio >= 0 ? fmtPow(x.logRatio) + ' times' : `${fmtPow(-x.logRatio)} times <i>less</i> likely`}</td></tr>`).join('') + `</tbody></table>`;
       const best = rows.find(x => x.logRatio > -Infinity);
       const top = best ? best.logRatio : -Infinity;
+      const pct = p => p < 0.001 ? 'under 0.1%' : `${(100 * p).toFixed(p < 0.1 ? 1 : 0)}%`;
       html += top > Math.log(1000) ? `<p>Your deck still clearly remembers its order: a perfect shuffle would almost never leave it like this.</p>`
-        : top > Math.log(10) ? `<p>Some order is left: a deck like yours is noticeably more likely after a few riffles than after a perfect shuffle.</p>`
-        : `<p>By this test your deck looks well shuffled.</p>`;
+        : top > Math.log(10) || pAtMost < 0.01 ? `<p>Some order is left: a perfect shuffle leaves ${r} or fewer rising sequences in ${pct(pAtMost)} of deals.</p>`
+        : pAtLeast < 0.01 ? `<p>That is too many: a perfect shuffle leaves ${r} or more in ${pct(pAtLeast)} of deals. Something put runs of cards in reverse order; dealing cards into a pile reverses them, for example.</p>`
+        : `<p>By this test your deck looks well shuffled: a perfect shuffle gives ${r} or fewer rising sequences in ${pct(pAtMost)} of deals.</p>`;
     }
     out.innerHTML = html;
   }

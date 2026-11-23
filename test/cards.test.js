@@ -151,3 +151,11 @@ test('riffleFit: impossible below log2(r) riffles, ratio falls toward 1 as k gro
   assert.ok(Math.abs(live.at(-1).logRatio) < 0.5);
   assert.equal(riffleFit(fresh(52)).r, 1);
 });
+
+test('riffleFit tail chances: reversed deck is flagged as too many, fresh deck as too few', async () => {
+  const { riffleFit } = await import('../src/cards.js');
+  const rev = riffleFit(fresh(52).reverse()); assert.equal(rev.r, 52); assert.ok(rev.pAtLeast < 1e-60 && rev.pAtMost === 1);
+  const fr = riffleFit(fresh(52)); assert.ok(fr.pAtMost < 1e-60 && fr.pAtLeast === 1);
+  let d = fresh(52); const r = rng(8); for (let i = 0; i < 12; i++) d = riffle(d, r);
+  const f = riffleFit(d); assert.ok(Math.abs(f.pAtMost + f.pAtLeast - 1 - 0) < 0.2); // overlap is P(r exactly), small
+});
