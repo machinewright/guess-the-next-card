@@ -19,7 +19,7 @@ function chart({ title, yMax, ticks, value, fmt, ref, refLabel, tipText, aria })
   for (const k of ks) {
     add('circle', { cx: x(k), cy: y(value(k)), r: 4.5, class: 'dot' });
     if (k === 7) add('text', { x: x(k) + 8, y: y(value(k)) - 10, class: 'label strong' }, fmt(value(k), true));
-    const hit = add('circle', { cx: x(k), cy: y(value(k)), r: 14, class: 'hit', tabindex: 0, role: 'img', 'aria-label': tipText(k).replace(/<[^>]+>/g, '') });
+    const hit = add('circle', { cx: x(k), cy: y(value(k)), r: 14, class: 'hit', tabindex: 0, role: 'img', 'aria-label': tipText(k).replace(/<br>/g, '. ').replace(/<[^>]+>/g, '') });
     const show = () => { document.querySelectorAll('.chart-wrap .tip').forEach(t => { t.hidden = true; }); tip.hidden = false; tip.innerHTML = tipText(k); const bb = svg.getBoundingClientRect(), s = bb.width / W;
       const left = x(k) * s + 16; tip.style.left = `${left + 230 > bb.width ? x(k) * s - 246 : left}px`; tip.style.top = `${Math.max(0, y(value(k)) * s - 30)}px`; };
     hit.addEventListener('mouseenter', show); hit.addEventListener('focus', show); hit.addEventListener('click', show);

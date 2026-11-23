@@ -8,6 +8,7 @@ export function mount(el, opts) {
     <div class="spread" role="group" aria-label="The deck, top card first"></div>
     <div class="controls">
       <label>Riffles <select aria-label="Number of riffles">${[1, 2, 3, 4].map(v => `<option${v === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+      <button data-a="top" hidden>Put it on top</button>
       <button class="primary" data-a="go" disabled>Riffle and find it</button>
       <button data-a="reset">Start again</button>
       <button data-a="many">Try 200 random moves</button>
@@ -28,11 +29,11 @@ export function mount(el, opts) {
     });
     say.innerHTML = {
       pick: 'The deck is in order. <b>Pick any card</b> to take it out.',
-      place: `You took the ${cardName(picked)}. Now <b>click a card</b>: the ${cardName(picked)} goes back in just after it.`,
+      place: `You took the ${cardName(picked)}. Now <b>click a card</b>: the ${cardName(picked)} goes back in just after it. (Or put it on top.)`,
       ready: `The ${cardName(moved)} is in its new place. Choose how many riffles, then press the button. (The finder never sees which card you moved, only the deck after the riffles.)`,
       done: 'The deck after the riffles, top card first.',
     }[phase];
-    go.disabled = phase !== 'ready';
+    go.disabled = phase !== 'ready'; el.querySelector('[data-a=top]').hidden = phase !== 'place';
   }
   spread.addEventListener('click', e => {
     const b = e.target.closest('button.card'); if (!b) return; const i = +b.dataset.i, c = deck[i];
@@ -49,6 +50,10 @@ export function mount(el, opts) {
   el.addEventListener('click', e => {
     const a = e.target.closest('button')?.dataset.a; if (!a) return;
     if (a === 'reset') reset();
+    if (a === 'top' && phase === 'place') {
+      if (deck[0] === picked) { say.textContent = 'It is already on top. Pick a different spot.'; return; }
+      deck.splice(deck.indexOf(picked), 1); deck.unshift(picked); moved = picked; picked = -1; phase = 'ready'; render();
+    }
     if (a === 'go') {
       for (let r = 0; r < k; r++) deck = riffle(deck);
       const odds = movedOdds(deck, k); let best = 0; odds.forEach((v, i) => { if (v > odds[best]) best = i; });
