@@ -3,7 +3,7 @@
 # push main, enable Pages from main /. PRIVATE=1 only pushes to a private repo.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-OWNER=${OWNER:-machinewright}; REPO=${REPO:-three-shuffles}
+OWNER=${OWNER:-machinewright}; REPO=${REPO:-guess-the-next-card}
 [ -z "$(git status --porcelain)" ] || { echo "uncommitted changes; commit first" >&2; exit 1; }
 node --test test/ >/dev/null || { echo "tests fail" >&2; exit 1; }
 if ! gh repo view "$OWNER/$REPO" >/dev/null 2>&1; then

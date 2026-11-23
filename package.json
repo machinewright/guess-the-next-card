@@ -1,1 +1,1 @@
-{ "name": "three-shuffles", "private": true, "type": "module", "scripts": { "test": "node --test test/" } }
+{ "name": "guess-the-next-card", "private": true, "type": "module", "scripts": { "test": "node --test test/" } }
