@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="../style.css">
+<style>body{margin:0;width:1200px;height:630px;background:#fbf9f4;display:flex;flex-direction:column;justify-content:center;padding:0 70px;box-sizing:border-box}
+h1{font-size:76px;margin:0 0 10px}p{font:400 30px/1.4 var(--serif);color:#3d4452;margin:0 0 30px}canvas{width:1060px;border-radius:14px}</style>
+<h1>Guess the next card</h1><p>Three riffles leave a deck that remembers. Play against it.</p><canvas class="strip" id="c"></canvas>
+<script type="module">
+import { drawBars, SEQ_COLOURS } from '../widgets/riffle.js';
+import { fresh, riffle, risingSequences, rng } from '../src/cards.js';
+const r = rng(31); let d = fresh(52); for (let i = 0; i < 3; i++) d = riffle(d, r);
+const { seq } = risingSequences(d); const cv = document.getElementById('c');
+drawBars(cv, d, { colourOf: c => SEQ_COLOURS[seq[c]] }); document.body.dataset.ready = 1;
+</script>
