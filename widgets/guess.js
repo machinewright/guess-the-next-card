@@ -17,19 +17,20 @@ export function mount(el, opts) {
       <div class="scores" aria-live="polite"></div>
       <div class="note last" aria-live="polite"></div>
     </div>
+    <p class="dealt note" aria-live="off"></p>
     <div class="cards" role="group" aria-label="Your guess for the next card"></div>
     <div class="controls">
       <button data-a="auto">Let the guesser name the rest</button>
     </div>
     <p class="readout" aria-live="polite"></p>`;
   const grid = el.querySelector('.cards'), big = el.querySelector('.bigcard'), sc = el.querySelector('.scores');
-  const lastEl = el.querySelector('.last'), out = el.querySelector('.readout'), sel = el.querySelector('select');
+  const dealtEl = el.querySelector('.dealt'), autoBtn = el.querySelector('[data-a=auto]'), lastEl = el.querySelector('.last'), out = el.querySelector('.readout'), sel = el.querySelector('select');
   const order = []; for (let s = 0; s < 4; s++) for (let r = 0; r < 13; r++) order.push(s * 13 + r);
   const btn = new Map();
   for (const c of order) {
     const b = document.createElement('button');
     b.className = 'card' + (isRed(c) ? ' red' : ''); b.dataset.c = c; b.setAttribute('aria-label', cardLong(c));
-    b.innerHTML = `<i class="heat" style="opacity:0"></i><span>${cardName(c)}</span>`;
+    b.innerHTML = `<i class="heat" style="opacity:0"></i><span>${cardName(c).slice(0, -1)}<br class="narrow">${cardName(c).slice(-1)}</span>`;
     grid.append(b); btn.set(c, b);
   }
   function deal() {
@@ -54,6 +55,8 @@ export function mount(el, opts) {
       if (probs.has(c)) b.setAttribute('aria-label', `${cardLong(c)}` + (showOdds ? `, guesser's odds ${(100 * probs.get(c)).toFixed(1)}%` : ''));
       else b.setAttribute('aria-label', `${cardLong(c)}, already turned`);
     }
+    autoBtn.disabled = done;
+    dealtEl.innerHTML = i ? 'Dealt so far, in order: ' + deck.slice(0, i).map(c => `<span class="${isRed(c) ? 'red' : ''}">${cardName(c)}</span>`).join(' ') : '';
     if (last) { big.className = 'bigcard' + (isRed(last.c) ? ' red' : ''); big.textContent = cardName(last.c); }
     else { big.className = 'bigcard back'; big.textContent = ''; }
     const chance = done ? 0 : 1 / (n - i);
@@ -69,7 +72,8 @@ export function mount(el, opts) {
     else if (showOdds) {
       const g = botGuess();
       out.innerHTML = `The guesser's pick: <b>${cardName(g.card)}</b>, with odds <span class="num">${(100 * g.p).toFixed(1)}%</span>. ` +
-        `A blind guess has ${(100 * chance).toFixed(1)}%. Darker means more likely.`;
+        `A blind guess has ${(100 * chance).toFixed(1)}%. Darker means more likely.` +
+        (g.p < 1.5 * chance ? ` <span class="note">The odds are nearly flat: the shading exaggerates small differences, and there is little left to read.</span>` : '');
     } else out.innerHTML = i === 0 ? `The deck started in order: A♠ to K♠, then hearts, clubs and diamonds, each ace to king.` : '';
   }
   grid.addEventListener('click', e => { const b = e.target.closest('button.card'); if (b && !b.disabled) turn(+b.dataset.c); });

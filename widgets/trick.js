@@ -21,7 +21,7 @@ export function mount(el, opts) {
     deck.forEach((c, i) => {
       const b = document.createElement('button');
       b.className = 'card' + (isRed(c) ? ' red' : '') + (c === picked && phase === 'place' ? ' picked' : '') + (guess && c === guess.card ? ' found' : '');
-      b.textContent = cardName(c); b.dataset.i = i;
+      b.innerHTML = `${cardName(c).slice(0, -1)}<br class="narrow">${cardName(c).slice(-1)}`; b.dataset.i = i;
       b.disabled = phase === 'ready' || phase === 'done';
       b.setAttribute('aria-label', cardLong(c) + (c === picked && phase === 'place' ? ', picked up' : ''));
       spread.append(b);
@@ -58,6 +58,7 @@ export function mount(el, opts) {
         (right ? `<span class="good">Right.</span>` : `<span class="bad">Wrong:</span> it was the ${cardLong(moved)}.`);
     }
     if (a === 'many') {
+      reset();
       const r = rng(Date.now() & 0xffffffff); let hit = 0, T = 200;
       for (let t = 0; t < T; t++) {
         const d = fresh(n), from = Math.floor(r() * n), [m] = d.splice(from, 1);

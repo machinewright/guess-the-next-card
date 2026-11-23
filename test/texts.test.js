@@ -41,14 +41,15 @@ test('guesser averages quoted in the text match the measured table', () => {
   for (let k = 1; k <= 10; k++) assert.equal(GUESS_TABLE[k].decks, 4000); has('4,000 decks');
 });
 
-test('moved card: almost never wrong after one riffle, ~9 in 10 after two, ~6 in 10 after three, lost after four', () => {
+test('moved card: 94%, 86%, 62%, about 1 in 8 for 1-4 riffles', () => {
   const rate = (k, T, seed) => { const r = rng(seed); let hit = 0;
     for (let t = 0; t < T; t++) { const d = fresh(52), from = Math.floor(r() * 52), [m] = d.splice(from, 1);
       let to; do { to = Math.floor(r() * 52); } while (to === from); d.splice(to, 0, m);
       let x = d; for (let q = 0; q < k; q++) x = riffle(x, r);
       const o = movedOdds(x, k); if (o.indexOf(Math.max(...o)) === m) hit++; }
     return hit / T; };
-  const r1 = rate(1, 300, 11), r2 = rate(2, 400, 12), r3 = rate(3, 400, 13), r4 = rate(4, 300, 14);
-  assert.ok(r1 > 0.93, `1: ${r1}`); assert.ok(r2 > 0.84 && r2 < 0.94, `2: ${r2}`); assert.ok(r3 > 0.55 && r3 < 0.67, `3: ${r3}`); assert.ok(r4 < 0.2, `4: ${r4}`);
-  has('after two it finds the card about nine times in ten; after three, about six times in ten');
+  const r1 = rate(1, 1500, 11), r2 = rate(2, 1500, 12), r3 = rate(3, 1500, 13), r4 = rate(4, 1500, 14);
+  const near = (x, want, tol) => assert.ok(Math.abs(x - want) < tol, `${x} vs ${want}`);
+  near(r1, 0.94, 0.02); near(r2, 0.86, 0.03); near(r3, 0.62, 0.04); near(r4, 0.125, 0.03); assert.ok(r4 * 52 > 5.5);
+  has('94% of the time after one riffle, 86% after two, and 62% after three'); has('about one time in eight'); has('six times better than a blind guess');
 });

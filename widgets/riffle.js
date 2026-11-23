@@ -24,15 +24,15 @@ export function mount(el) {
   const n = 52; let deck = fresh(n), k = 0, cut = -1, showSeq = true;
   el.innerHTML = `
     <canvas class="strip" role="img"></canvas>
+    <p class="note">Each bar is a card, top of the deck on the left. Its height is where it sat in the fresh deck.</p>
     <div class="controls">
       <button class="primary" data-a="riffle">Riffle</button>
-      <button data-a="cut">Show where it was cut</button>
       <button data-a="seq" aria-pressed="true">Colour rising sequences</button>
       <button data-a="reset">New deck</button>
     </div>
     <p class="readout" aria-live="polite"></p>`;
   const cv = el.querySelector('canvas'), out = el.querySelector('.readout');
-  const bCut = el.querySelector('[data-a=cut]'), bSeq = el.querySelector('[data-a=seq]');
+  const bSeq = el.querySelector('[data-a=seq]');
   let lastCut = -1, prevDeck = null;
   function render() {
     const { seq, count } = risingSequences(deck);
@@ -47,12 +47,10 @@ export function mount(el) {
         ? `Before riffle ${k}: the deck was cut after <span class="num">${cut}</span> cards (orange half, blue half). Press the button again to see the result.`
         : `After <span class="num">${k}</span> riffle${k === 1 ? '' : 's'}: <span class="num">${count}</span> rising sequence${count === 1 ? '' : 's'} (at most ${bound > 52 ? 52 : bound} possible).` +
           (showSeq && count > 8 ? ` <span class="note">More than eight: no longer coloured.</span>` : '');
-    bCut.disabled = k === 0; bCut.setAttribute('aria-pressed', String(cut >= 0));
   }
   el.addEventListener('click', e => {
     const a = e.target.closest('button')?.dataset.a; if (!a) return;
     if (a === 'riffle') { prevDeck = deck; const d = riffleDetail(deck); deck = d.deck; lastCut = d.cut; k++; cut = -1; }
-    if (a === 'cut') cut = cut >= 0 ? -1 : lastCut;
     if (a === 'seq') { showSeq = !showSeq; bSeq.setAttribute('aria-pressed', String(showSeq)); }
     if (a === 'reset') { deck = fresh(n); k = 0; cut = -1; prevDeck = null; }
     render();

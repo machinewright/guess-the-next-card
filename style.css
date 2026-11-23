@@ -82,7 +82,10 @@ table.data th, table.data td { padding: 3px 10px; text-align: right; border-bott
 .cards button.card.mark { outline: 3px solid #2f6fb8; outline-offset: 1px; z-index: 1; }
 .cards button.card .heat { position: absolute; inset: 0; border-radius: 5px; background: #e9a650; pointer-events: none; }
 .cards button.card span { position: relative; }
-@media (max-width: 480px) { .cards { gap: 2px; } .cards button.card { font-size: 10.5px; border-radius: 4px; } }
+.cards br.narrow, .spread br.narrow { display: none; }
+.dealt { min-height: 1.5em; margin: 10px 0 0; line-height: 1.6; word-spacing: 2px; } .dealt .red { color: #b42d22; }
+@media (max-width: 480px) { .cards { gap: 2px; } .cards button.card { font-size: 12px; line-height: 1.15; border-radius: 4px; aspect-ratio: 1 / 2; }
+  .cards br.narrow, .spread br.narrow { display: inline; } }
 .deal { display: flex; gap: 14px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
 .bigcard { width: 64px; aspect-ratio: 5 / 7; border-radius: 8px; background: #fff; border: 1px solid #d3cab6; display: flex;
   align-items: center; justify-content: center; font: 700 20px/1 var(--sans); box-shadow: 0 4px 12px -6px rgba(20,24,33,.4); }
@@ -97,6 +100,6 @@ table.data th, table.data td { padding: 3px 10px; text-align: right; border-bott
 .spread button.card.picked { background: #fff1c2; border-color: #e2b85a; transform: translateY(-4px); }
 .spread button.card.found { outline: 3px solid #1d7a48; outline-offset: 1px; }
 .spread button.card.gap { background: transparent; border: 1px dashed #b9ae95; color: transparent; }
-@media (max-width: 480px) { .spread button.card { width: calc((100% - 12 * 2px) / 13); font-size: 10px; } }
+@media (max-width: 480px) { .spread button.card { width: calc((100% - 12 * 2px) / 13); font-size: 12px; line-height: 1.15; aspect-ratio: 1 / 2; } }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
