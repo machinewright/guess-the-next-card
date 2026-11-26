@@ -104,3 +104,4 @@ table.data th, table.data td { padding: 3px 10px; text-align: right; border-bott
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 .widget .controls + canvas.strip { margin-top: 14px; }
+.widget canvas.strip[hidden] { display: none; }
